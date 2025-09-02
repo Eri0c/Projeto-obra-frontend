@@ -18,6 +18,10 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import DashboardCliente from "./pages/Dashboard/DashboardCliente";
+import DashboardResponsavel from "./pages/Dashboard/DashboardResponsavel";
+import DashboardColaborador from "./pages/Dashboard/DashboardColaborador";
 
 export default function App() {
   return (
@@ -26,31 +30,45 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Home />} /> {/* General authenticated home */}
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
+              {/* Role-specific Dashboards */}
+              <Route path="/dashboard/cliente" element={<ProtectedRoute requiredRole="cliente" />}>
+                <Route index element={<DashboardCliente />} />
+              </Route>
+              <Route path="/dashboard/responsavel" element={<ProtectedRoute requiredRole="responsavel" />}>
+                <Route index element={<DashboardResponsavel />} />
+              </Route>
+              <Route path="/dashboard/colaborador" element={<ProtectedRoute requiredRole="colaborador" />}>
+                <Route index element={<DashboardColaborador />} />
+              </Route>
 
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
+              {/* Other authenticated routes that don't need specific role checks */}
+              <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/blank" element={<Blank />} />
 
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+              {/* Forms */}
+              <Route path="/form-elements" element={<FormElements />} />
 
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+              {/* Tables */}
+              <Route path="/basic-tables" element={<BasicTables />} />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+              {/* Ui Elements */}
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/avatars" element={<Avatars />} />
+              <Route path="/badge" element={<Badges />} />
+              <Route path="/buttons" element={<Buttons />} />
+              <Route path="/images" element={<Images />} />
+              <Route path="/videos" element={<Videos />} />
+
+              {/* Charts */}
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
+            </Route>
           </Route>
 
           {/* Auth Layout */}

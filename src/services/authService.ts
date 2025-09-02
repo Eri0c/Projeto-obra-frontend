@@ -44,6 +44,7 @@ export const setToken = (token: string): void => {
 
 export const removeToken = (): void => {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('user');
 };
 
 // --- Authentication Service ---
@@ -54,6 +55,7 @@ export const authService = {
     const response = await api.post<AuthResponse>('/login', data);
     if (response.data.access_token) {
       setToken(response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user)); // Added this line
     }
     return response.data;
   },

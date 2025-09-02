@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
@@ -6,14 +6,39 @@ import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import { authService, LoginData } from "../../services/authService";
+import { useAuth} from "@/hooks/useAuth";
 
 export default function SignInForm() {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [formData, setFormData] = useState<LoginData>({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const [loggedInUserType, setLoggedInUserType] = useState<string | null>(null); // New state
+
+  // Effect to handle redirection after login
+  useEffect(() => {
+    if (loggedInUserType) {
+      let redirectTo = "/dashboard";
+      switch (loggedInUserType) {
+        case "cliente":
+          redirectTo = "/dashboard/cliente";
+          break;
+        case "responsavel":
+          redirectTo = "/dashboard/responsavel";
+          break;
+        case "colaborador":
+          redirectTo = "/dashboard/colaborador";
+          break;
+        default:
+          redirectTo = "/dashboard";
+      }
+      navigate(redirectTo);
+    }
+  }, [loggedInUserType, navigate]); // Dependencies
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,8 +51,12 @@ export default function SignInForm() {
     setError(null);
 
     try {
-      await authService.login(formData);
-      navigate("/"); // Redireciona para o dashboard/home em caso de sucesso
+      const loggedInUser = await login(formData);
+      if (loggedInUser && loggedInUser.tipo) {
+        setLoggedInUserType(loggedInUser.tipo);
+      } else {
+        setLoggedInUserType("default");
+      }
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.email) {
         setError(err.response.data.email[0]);
