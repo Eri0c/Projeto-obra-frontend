@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import DashboardCliente from "./pages/Dashboard/DashboardCliente";
 import DashboardResponsavel from "./pages/Dashboard/DashboardResponsavel";
 import DashboardColaborador from "./pages/Dashboard/DashboardColaborador";
+import OnboardingCliente from "./pages/Onboarding/OnboardingCliente";
 
 export default function App() {
   return (
@@ -74,6 +75,9 @@ export default function App() {
           {/* Auth Layout */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+
+          {/* Onboarding Routes */}
+          <Route path="/onboarding/cliente" element={<OnboardingCliente />} />
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />

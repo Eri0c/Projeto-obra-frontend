@@ -17,7 +17,8 @@ export default function SignUpForm() {
     name: '',
     email: '',
     password: '',
-    password_confirmation: ''
+    password_confirmation: '',
+    tipo: 'cliente' // Set default tipo to 'cliente'
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -40,8 +41,12 @@ export default function SignUpForm() {
       const registerPayload: RegisterData = {
         ...formData,
       };
-      await authService.register(registerPayload);
-      navigate("/"); // Redireciona para o dashboard/home em caso de sucesso
+      const response = await authService.register(registerPayload); // Capture response
+      if (response.redirect_url) { // Use redirect_url from backend
+        navigate(response.redirect_url);
+      } else {
+        navigate("/"); // Fallback
+      }
     } catch (err: any) {
         if (err.response && err.response.data && err.response.data.errors) {
             setErrors(err.response.data.errors);
